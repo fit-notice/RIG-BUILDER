@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuildMyPC - Custom PC Builder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2e56b1;
+            --secondary-color: #4caf50;
+            --accent-color: #4895ef;
+            --gradient-start: #e9afc5;
+            --gradient-middle: #a6d1e6;
+            --gradient-end: #4a7c59;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            --card-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
+            background-attachment: fixed;
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .app-wrapper {
+            display: flex;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 300px;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 40px 30px;
+        }
+
+        .brand {
+            margin-bottom: 50px;
+        }
+
+        .brand h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .brand p {
+            font-size: 1.1rem;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        .feature-item {
+            margin-bottom: 40px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-text h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .feature-text p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .sidebar-footer {
+            margin-top: 60px;
+        }
+
+        .sidebar-footer a {
+            color: var(--text-light);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar-footer a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+
+        .content-header {
+            margin-bottom: 30px;
+        }
+
+        .content-header h2 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+
+        /* Component Cards */
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .component-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .component-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .component-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .component-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .component-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .component-selection {
+            padding: 12px 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+        }
+
+        .placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        .component-price {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            text-align: right;
+            margin-bottom: 15px;
+        }
+
+        .component-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn i {
+            margin-right: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #254796;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-accent {
+            background: linear-gradient(to right, var(--accent-color), #4caf50);
+            color: white;
+        }
+
+        .btn-accent:hover {
+            opacity: 0.9;
+        }
+
+        /* Build Summary */
+        .build-summary {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .summary-header {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .summary-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .summary-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .summary-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .compatibility-status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f1f8e9;
+            display: flex;
+            align-items: center;
+        }
+
+        .compatibility-status i {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+
+        .compatibility-status.incompatible {
+            background: #ffebee;
+        }
+
+        .compatibility-status.incompatible i {
+            color: #e74c3c;
+        }
+
+        .save-build-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            margin-top: 15px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            width: 80%;
+            max-width: 900px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .close-modal {
+            font-size: 24px;
+            cursor: pointer;
+            color: #aaa;
+            transition: color 0.2s;
+        }
+
+        .close-modal:hover {
+            color: var(--text-dark);
+        }
+
+        .modal-body {
+            padding: 25px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        /* Component table in modal */
+        .component-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .component-table th {
+            background-color: #f8f9fa;
+            text-align: left;
+            padding: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .component-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .component-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .component-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .app-wrapper {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 30px;
+            }
+
+            .feature-item {
+                margin-bottom: 25px;
+            }
+
+            .sidebar-footer {
+                margin-top: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .component-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-details {
+                grid-template-columns: 1fr;
+            }
+
+            .main-content {
+                padding: 25px;
+            }
+
+            .modal-content {
+                width: 95%;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="app-wrapper">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="brand">
+                    <h1>BuildMyPC</h1>
+                    <p>Design your perfect build with confidence</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <div class="feature-text">
+                        <h3>Component Selection</h3>
+                        <p>Choose from premium components with verified compatibility</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="feature-text">
+                        <h3>Compatibility Check</h3>
+                        <p>Our system ensures all parts work perfectly together</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="feature-text">
+                        <h3>Performance Analysis</h3>
+                        <p>Get real-time power requirements and performance metrics</p>
+                    </div>
+                </div>
+
+                <div class="sidebar-footer">
+                    <a href="#">Need help? Contact support</a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="content-header">
+                    <h2>Design Your Custom PC</h2>
+                </div>
+
+                <!-- Component Grid -->
+                <div class="component-grid">
+                    <!-- CPU -->
+                    <div class="component-card" id="cpu-card">
+                        <div class="component-header">
+                            <div class="component-icon">
+                                <i class="fas fa-microchip"></i>
+                            </div>
+                            <div class="component-title">Processor (CPU)</div>
+                        </div>
+                        <div class="component-selection" id="selected-cpu">
+                            <span class="placeholder">Select a processor</span>
+                        </div>
+                        <div class="component-price" id="cpu-price">$0.00</div>
+                        <div class="component-actions">
+                            <button class="btn btn-primary" onclick="openModal('cpu')">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                            <button class="btn btn-danger hidden" onclick="removePart('cpu')">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Motherboard -->
+                    <div class="component-card" id="motherboard-card">
+                        <div class="component-header">
+                            <div class="component-icon">
+                                <i class="fas fa-server"></i>
+                            </div>
+                            <div class="component-title">Motherboard</div>
+                        </div>
+                        <div class="component-selection" id="selected-motherboard">
+                            <span class="placeholder">Select a motherboard</span>
+                        </div>
+                        <div class="component-price" id="motherboard-price">$0.00</div>
+                        <div class="component-actions">
+                            <button class="btn btn-primary" onclick="openModal('motherboard')">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                            <button class="btn btn-danger hidden" onclick="removePart('motherboard')">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- GPU -->
+                    <div class="component-card" id="gpu-card">
+                        <div class="component-header">
+                            <div class="component-icon">
+                                <i class="fas fa-tv"></i>
+                            </div>
+                            <div class="component-title">Graphics Card (GPU)</div>
+                        </div>
+                        <div class="component-selection" id="selected-gpu">
+                            <span class="placeholder">Select a graphics card</span>
+                        </div>
+                        <div class="component-price" id="gpu-price">$0.00</div>
+                        <div class="component-actions">
+                            <button class="btn btn-primary" onclick="openModal('gpu')">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                            <button class="btn btn-danger hidden" onclick="removePart('gpu')">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- RAM -->
+                    <div class="component-card" id="ram-card">
+                        <div class="component-header">
+                            <div class="component-icon">
+                                <i class="fas fa-memory"></i>
+                            </div>
+                            <div class="component-title">Memory (RAM)</div>
+                        </div>
+                        <div class="component-selection" id="selected-ram">
+                            <span class="placeholder">Select memory</span>
+                        </div>
+                        <div class="component-price" id="ram-price">$0.00</div>
+                        <div class="component-actions">
+                            <button class="btn btn-primary" onclick="openModal('ram')">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                            <button class="btn btn-danger hidden" onclick="removePart('ram')">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Storage -->
+                    <div class="component-card" id="storage-card">
+                        <div class="component-header">
+                            <div class="component-icon">
+                                <i class="fas fa-hdd"></i>
+                            </div>
+                            <div class="component-title">Storage</div>
+                        </div>
+                        <div class="component-selection" id="selected-storage">
+                            <span class="placeholder">Select storage</span>
+                        </div>
+                        <div class="component-price" id="storage-price">$0.00</div>
+                        <div class="component-actions">
+                            <button class="btn btn-primary" onclick="openModal('storage')">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                            <button class="btn btn-danger hidden" onclick="removePart('storage')">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Power Supply -->
+                    <div class="component-card" id="psu-card">
+                        <div class="component-header">
+                            <div class="component-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="component-title">Power Supply</div>
+                        </div>
+                        <div class="component-selection" id="selected-psu">
+                            <span class="placeholder">Select a power supply</span>
+                        </div>
+                        <div class="component-price" id="psu-price">$0.00</div>
+                        <div class="component-actions">
+                            <button class="btn btn-primary" onclick="openModal('psu')">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                            <button class="btn btn-danger hidden" onclick="removePart('psu')">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Case -->
+                    <div class="component-card" id="case-card">
+                        <div class="component-header">
+                            <div class="component-icon">
+                                <i class="fas fa-desktop"></i>
+                            </div>
+                            <div class="component-title">PC Case</div>
+                        </div>
+                        <div class="component-selection" id="selected-case">
+                            <span class="placeholder">Select a case</span>
+                        </div>
+                        <div class="component-price" id="case-price">$0.00</div>
+                        <div class="component-actions">
+                            <button class="btn btn-primary" onclick="openModal('case')">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                            <button class="btn btn-danger hidden" onclick="removePart('case')">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- CPU Cooler -->
+                    <div class="component-card" id="cooler-card">
+                        <div class="component-header">
+                            <div class="component-icon">
+                                <i class="fas fa-fan"></i>
+                            </div>
+                            <div class="component-title">CPU Cooler</div>
+                        </div>
+                        <div class="component-selection" id="selected-cooler">
+                            <span class="placeholder">Select a CPU cooler</span>
+                        </div>
+                        <div class="component-price" id="cooler-price">$0.00</div>
+                        <div class="component-actions">
+                            <button class="btn btn-primary" onclick="openModal('cooler')">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                            <button class="btn btn-danger hidden" onclick="removePart('cooler')">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Build Summary -->
+                <div class="build-summary">
+                    <h3 class="summary-header">Build Summary</h3>
+                    
+                    <div class="summary-details">
+                        <div class="summary-item">
+                            <div class="summary-label">Total Price</div>
+                            <div class="summary-value" id="total-price">$0.00</div>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <div class="summary-label">Estimated Power</div>
+                            <div class="summary-value" id="total-tdp">0W</div>
+                        </div>
+                    </div>
+                    
+                    <div class="compatibility-status" id="compatibility-status">
+                        <i class="fas fa-check-circle"></i>
+                        <span>No compatibility issues detected</span>
+                    </div>
+                    
+                    <button class="btn btn-accent save-build-btn" id="save-build-btn">
+                        <i class="fas fa-save"></i> Save Your Build
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Component Selection Modal -->
+    <div class="modal" id="component-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Select Component</h2>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Components will be loaded here -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Store the selected components
+        const selectedParts = {
+            cpu: null,
+            motherboard: null,
+            gpu: null,
+            ram: null,
+            storage: null,
+            psu: null,
+            case: null,
+            cooler: null
+        };
+
+        // Modal management
+        function openModal(componentType) {
+            // Set modal title based on component type
+            document.getElementById('modal-title').textContent = `Select ${componentType.toUpperCase()}`;
+            
+            // Clear previous modal content
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = '<div class="loading">Loading components...</div>';
+            
+            // Show the modal
+            document.getElementById('component-modal').style.display = 'block';
+            
+            // Fetch component data
+            fetchComponents(componentType, modalBody);
+        }
+
+        function closeModal() {
+            document.getElementById('component-modal').style.display = 'none';
+        }
+
+        // Fetch components from the API
+        function fetchComponents(componentType, modalBodyElement) {
+            fetch(`/api/components/${componentType}`)
+                .then(response => response.json())
+                .then(components => {
+                    if (components.length === 0) {
+                        modalBodyElement.innerHTML = '<p class="no-components">No components found.</p>';
+                        return;
+                    }
+                    
+                    // Create the table for components
+                    let tableHTML = `
+                        <table class="component-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Specs</th>
+                                    <th>Price</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    
+                    // Add each component to the table
+                    components.forEach(component => {
+                        // Skip components with null price
+                        if (component.price === null) return;
+                        
+                        // Generate specs based on component type
+                        const specs = generateComponentSpecs(componentType, component);
+                        
+                        tableHTML += `
+                            <tr>
+                                <td>${component.name}</td>
+                                <td>${specs}</td>
+                                <td>$${component.price.toFixed(2)}</td>
+                                <td>
+                                    <button class="btn btn-primary" onclick="selectComponent('${componentType}', ${JSON.stringify(component).replace(/"/g, '&quot;')})">
+                                        Select
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    
+                    tableHTML += `
+                            </tbody>
+                        </table>
+                    `;
+                    
+                    modalBodyElement.innerHTML = tableHTML;
+                })
+                .catch(error => {
+                    console.error('Error fetching components:', error);
+                    modalBodyElement.innerHTML = `<p class="error">Error loading components: ${error.message}</p>`;
+                });
+        }
+
+        // Generate component-specific specs text
+        function generateComponentSpecs(type, component) {
+            switch (type) {
+                case 'cpu':
+                    return `${component.core_count} Cores | ${component.boost_clock} GHz | ${component.tdp}W | Socket ${component.socket}`;
+                case 'motherboard':
+                    return `Socket ${component.socket || 'Unknown'} | ${component.form_factor || 'Unknown'} Form Factor`;
+                case 'gpu':
+                    return `${component.memory || 'Unknown'} GB | ${component.tdp || 'Unknown'}W`;
+                case 'ram':
+                    return `${component.capacity || 'Unknown'} GB | ${component.speed || 'Unknown'} MHz`;
+                case 'storage':
+                    return `${component.capacity || 'Unknown'} GB | ${component.type || 'Unknown'}`;
+                case 'psu':
+                    return `${component.wattage || 'Unknown'}W | ${component.efficiency || 'Unknown'} Rating`;
+                case 'case':
+                    return `${component.form_factor || 'Unknown'} | ${component.included_fans || '0'} Fans`;
+                case 'cooler':
+                    return `${component.type || 'Unknown'} | TDP Support: ${component.tdp_support || 'Unknown'}W`;
+                default:
+                    return 'No specifications available';
+            }
+        }
+
+        // Select a component
+        function selectComponent(type, component) {
+            // Store the selected component
+            selectedParts[type] = component;
+            
+            // Update the UI
+            document.getElementById(`selected-${type}`).innerHTML = component.name;
+            document.getElementById(`${type}-price`).textContent = `$${component.price.toFixed(2)}`;
+            
+            // Show remove button, hide add button
+            document.querySelector(`#${type}-card .btn-primary`).classList.add('hidden');
+            document.querySelector(`#${type}-card .btn-danger`).classList.remove('hidden');
+            
+            // Close the modal
+            closeModal();
+            
+            // Update total price and check compatibility
+            updateTotalPrice();
+            checkCompatibility();
+        }
+
+        // Remove a component
+        function removePart(type) {
+            // Clear the selected component
+            selectedParts[type] = null;
+            
+            // Update the UI
+            document.getElementById(`selected-${type}`).innerHTML = '<span class="placeholder">Select a ' + type.charAt(0).toUpperCase() + type.slice(1) + '</span>';
+            document.getElementById(`${type}-price`).textContent = '$0.00';
+            
+            // Show add button, hide remove button
+            document.querySelector(`#${type}-card .btn-primary`).classList.remove('hidden');
+            document.querySelector(`#${type}-card .btn-danger`).classList.add('hidden');
+            
+            // Update total price and check compatibility
+            updateTotalPrice();
+            checkCompatibility();
+        }
+
+        // Update the total price
+        function updateTotalPrice() {
+            let totalPrice = 0;
+            let totalTDP = 0;
+            
+            // Calculate total price and TDP
+            for (const type in selectedParts) {
+                if (selectedParts[type]) {
+                    totalPrice += selectedParts[type].price;
+                    
+                    // Add TDP if available
+                    if (selectedParts[type].tdp) {
+                        totalTDP += selectedParts[type].tdp;
+                    }
+                }
+            }
+            
+            // Update UI
+            document.getElementById('total-price').textContent = `$${totalPrice.toFixed(2)}`;
+            document.getElementById('total-tdp').textContent = `${totalTDP}W`;
+        }
+
+        // Check component compatibility
+        function checkCompatibility() {
+            let isCompatible = true;
+            let issueMessages = [];
+            
+            // Reset compatibility status
+            document.getElementById('compatibility-status').innerHTML = `
+                <i class="fas fa-check-circle"></i>
+                <span>No compatibility issues detected</span>`;
+            document.getElementById('compatibility-status').className = 'compatibility-status compatible';
+            
+            // Check CPU and motherboard socket compatibility
+            if (selectedParts.cpu && selectedParts.motherboard) {
+                if (selectedParts.cpu.socket !== selectedParts.motherboard.socket) {
+                    isCompatible = false;
+                    issueMessages.push(`CPU socket (${selectedParts.cpu.socket}) does not match motherboard socket (${selectedParts.motherboard.socket})`);
+                }
+            }
+            
+            // Check if PSU can handle the total TDP
+            if (selectedParts.psu) {
+                const totalTDP = calculateTotalTDP();
+                if (totalTDP > selectedParts.psu.wattage) {
+                    isCompatible = false;
+                    issueMessages.push(`Total power consumption (${totalTDP}W) exceeds PSU capacity (${selectedParts.psu.wattage}W)`);
+                }
+            }
+            
+            // If there are compatibility issues, update the UI
+            if (!isCompatible) {
+                let issueHTML = '<i class="fas fa-exclamation-triangle"></i><span>Compatibility issues detected:</span><ul>';
+                issueMessages.forEach(msg => {
+                    issueHTML += `<li>${msg}</li>`;
+                });
+                issueHTML += '</ul>';
+                
+                document.getElementById('compatibility-status').innerHTML = issueHTML;
+                document.getElementById('compatibility-status').className = 'compatibility-status incompatible';
+            }
+        }
+
+        // Calculate total TDP
+        function calculateTotalTDP() {
+            let totalTDP = 0;
+            
+            for (const type in selectedParts) {
+                if (selectedParts[type] && selectedParts[type].tdp) {
+                    totalTDP += selectedParts[type].tdp;
+                }
+            }
+            
+            return totalTDP;
+        }
+
+        // Save the current build
+        document.getElementById('save-build-btn').addEventListener('click', function() {
+            // Check if any parts are selected
+            let hasParts = false;
+            for (const type in selectedParts) {
+                if (selectedParts[type]) {
+                    hasParts = true;
+                    break;
+                }
+            }
+            
+            if (!hasParts) {
+                alert('Please select at least one component before saving your build.');
+                return;
+            }
+            
+            // Prepare build data
+            const buildData = {
+                components: selectedParts,
+                totalPrice: parseFloat(document.getElementById('total-price').textContent.replace(', '')),
+                totalTDP: parseInt(document.getElementById('total-tdp').textContent),
+                date: new Date().toISOString()
+            };
+            
+            // In a real application, you would send this data to the server
+            // For now, we'll just save it to localStorage
+            const savedBuilds = JSON.parse(localStorage.getItem('savedBuilds') || '[]');
+            savedBuilds.push(buildData);
+            localStorage.setItem('savedBuilds', JSON.stringify(savedBuilds));
+            
+            alert('Build saved successfully!');
+        });
+
+        // Close the modal when clicking outside of it
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('component-modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Initialize the modal
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listeners and initial setup here if needed
+        });

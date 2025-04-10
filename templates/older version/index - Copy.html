@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC Part Picker Clone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PC Builder</h1>
+        </header>
+        
+        <main>
+            <div class="build-container">
+                <div class="component-list">
+                    <div class="component-row header">
+                        <div class="component-type">Component</div>
+                        <div class="component-name">Selection</div>
+                        <div class="component-price">Price</div>
+                        <div class="component-actions">Actions</div>
+                    </div>
+                    
+                    <!-- CPU -->
+                    <div class="component-row" id="cpu-row">
+                        <div class="component-type">
+                            <i class="fas fa-microchip"></i> CPU
+                        </div>
+                        <div class="component-name" id="selected-cpu">
+                            <span class="placeholder">Choose a CPU</span>
+                        </div>
+                        <div class="component-price" id="cpu-price">$0.00</div>
+                        <div class="component-actions">
+                            <button class="add-btn" onclick="openModal('cpu')">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                            <button class="remove-btn hidden" onclick="removePart('cpu')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Motherboard -->
+                    <div class="component-row" id="motherboard-row">
+                        <div class="component-type">
+                            <i class="fas fa-server"></i> Motherboard
+                        </div>
+                        <div class="component-name" id="selected-motherboard">
+                            <span class="placeholder">Choose a Motherboard</span>
+                        </div>
+                        <div class="component-price" id="motherboard-price">$0.00</div>
+                        <div class="component-actions">
+                            <button class="add-btn" onclick="openModal('motherboard')">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                            <button class="remove-btn hidden" onclick="removePart('motherboard')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- GPU -->
+                    <div class="component-row" id="gpu-row">
+                        <div class="component-type">
+                            <i class="fas fa-tv"></i> GPU
+                        </div>
+                        <div class="component-name" id="selected-gpu">
+                            <span class="placeholder">Choose a GPU</span>
+                        </div>
+                        <div class="component-price" id="gpu-price">$0.00</div>
+                        <div class="component-actions">
+                            <button class="add-btn" onclick="openModal('gpu')">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                            <button class="remove-btn hidden" onclick="removePart('gpu')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- RAM -->
+                    <div class="component-row" id="ram-row">
+                        <div class="component-type">
+                            <i class="fas fa-memory"></i> RAM
+                        </div>
+                        <div class="component-name" id="selected-ram">
+                            <span class="placeholder">Choose RAM</span>
+                        </div>
+                        <div class="component-price" id="ram-price">$0.00</div>
+                        <div class="component-actions">
+                            <button class="add-btn" onclick="openModal('ram')">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                            <button class="remove-btn hidden" onclick="removePart('ram')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Storage -->
+                    <div class="component-row" id="storage-row">
+                        <div class="component-type">
+                            <i class="fas fa-hdd"></i> Storage
+                        </div>
+                        <div class="component-name" id="selected-storage">
+                            <span class="placeholder">Choose Storage</span>
+                        </div>
+                        <div class="component-price" id="storage-price">$0.00</div>
+                        <div class="component-actions">
+                            <button class="add-btn" onclick="openModal('storage')">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                            <button class="remove-btn hidden" onclick="removePart('storage')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Power Supply -->
+                    <div class="component-row" id="psu-row">
+                        <div class="component-type">
+                            <i class="fas fa-bolt"></i> Power Supply
+                        </div>
+                        <div class="component-name" id="selected-psu">
+                            <span class="placeholder">Choose a Power Supply</span>
+                        </div>
+                        <div class="component-price" id="psu-price">$0.00</div>
+                        <div class="component-actions">
+                            <button class="add-btn" onclick="openModal('psu')">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                            <button class="remove-btn hidden" onclick="removePart('psu')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Case -->
+                    <div class="component-row" id="case-row">
+                        <div class="component-type">
+                            <i class="fas fa-desktop"></i> Case
+                        </div>
+                        <div class="component-name" id="selected-case">
+                            <span class="placeholder">Choose a Case</span>
+                        </div>
+                        <div class="component-price" id="case-price">$0.00</div>
+                        <div class="component-actions">
+                            <button class="add-btn" onclick="openModal('case')">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                            <button class="remove-btn hidden" onclick="removePart('case')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- CPU Cooler -->
+                    <div class="component-row" id="cooler-row">
+                        <div class="component-type">
+                            <i class="fas fa-fan"></i> CPU Cooler
+                        </div>
+                        <div class="component-name" id="selected-cooler">
+                            <span class="placeholder">Choose a CPU Cooler</span>
+                        </div>
+                        <div class="component-price" id="cooler-price">$0.00</div>
+                        <div class="component-actions">
+                            <button class="add-btn" onclick="openModal('cooler')">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                            <button class="remove-btn hidden" onclick="removePart('cooler')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="build-summary">
+                    <div class="summary-item">
+                        <div class="summary-label">Total Price:</div>
+                        <div class="summary-value" id="total-price">$0.00</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Estimated TDP:</div>
+                        <div class="summary-value" id="total-tdp">0W</div>
+                    </div>
+                    <div class="compatibility-check">
+                        <div class="compatibility-status" id="compatibility-status">
+                            <i class="fas fa-check-circle"></i> No compatibility issues detected
+                        </div>
+                    </div>
+                    <button class="save-build-btn" id="save-build-btn">
+                        <i class="fas fa-save"></i> Save Build
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Component Selection Modal -->
+    <div class="modal" id="component-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Select Component</h2>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Components will be loaded here -->
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

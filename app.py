@@ -8,16 +8,12 @@ app = Flask(__name__)
 def load_json_data(filename):
     file_path = os.path.join("data", filename)
     try:
-        # Ensure the file exists before trying to open
         if not os.path.exists(file_path):
             print(f"Warning: File {filename} does not exist in path {os.path.abspath(file_path)}")
             return []
-
-        with open(file_path, "r", encoding='utf-8') as f: # Added encoding
+        with open(file_path, "r", encoding='utf-8') as f:
             data = json.load(f)
-            print(f"Successfully loaded {filename}. Data count: {len(data) if isinstance(data, list) else 'Not a list'}")
             return data
-
     except json.JSONDecodeError as e:
         print(f"Error: Invalid JSON in {filename}: {str(e)}")
         return []
@@ -27,16 +23,13 @@ def load_json_data(filename):
 
 @app.route('/')
 def index():
-    # Ensure the templates directory exists and index.html is inside it
     if not os.path.exists('templates/index.html'):
-        print("Error: 'templates/index.html' not found. Make sure the file exists.")
-        # Optionally return an error page or message
+        print("Error: 'templates/index.html' not found.")
         return "Error: index.html template not found!", 404
     return render_template('index.html')
 
 @app.route('/api/components/<component_type>')
 def get_components(component_type):
-    # Map component types to their respective JSON files
     component_files = {
         'cpu': 'cpus.json',
         'motherboard': 'motherboards.json',
@@ -45,67 +38,49 @@ def get_components(component_type):
         'storage': 'storage.json',
         'psu': 'psu.json',
         'case': 'cases.json'
-        # 'cooler': 'coolers.json' # --- REMOVED COOLER ---
     }
-
     if component_type in component_files:
         components = load_json_data(component_files[component_type])
         return jsonify(components)
     else:
-        print(f"Warning: Unknown component type requested: {component_type}") # Added warning
+        print(f"Warning: Unknown component type requested: {component_type}")
         return jsonify([])
 
+# --- NEW ROUTE FOR SETTINGS PAGE ---
+@app.route('/settings')
+def settings_page():
+    if not os.path.exists('templates/settings.html'):
+        print("Error: 'templates/settings.html' not found.")
+        return "Error: settings.html template not found!", 404
+    return render_template('settings.html')
+# --- END NEW ROUTE ---
+
 if __name__ == '__main__':
-    # Define base directory relative to the script location
     base_dir = os.path.dirname(os.path.abspath(__file__))
     data_dir = os.path.join(base_dir, 'data')
     template_dir = os.path.join(base_dir, 'templates')
     static_dir = os.path.join(base_dir, 'static')
 
-
-    # Create data directory if it doesn't exist
     if not os.path.exists(data_dir):
-        print(f"Creating data directory at: {data_dir}")
         os.makedirs(data_dir)
 
-    # Check if component JSON files exist, if not create empty ones
     required_files = [
-        'cpus.json',
-        'motherboards.json',
-        'gpus.json',
-        'ram.json',
-        'storage.json',
-        'psu.json',
-        'cases.json'
-        # 'coolers.json' # --- REMOVED COOLER ---
+        'cpus.json', 'motherboards.json', 'gpus.json',
+        'ram.json', 'storage.json', 'psu.json', 'cases.json'
     ]
-
     for filename in required_files:
         file_path = os.path.join(data_dir, filename)
         if not os.path.exists(file_path):
-            print(f"Creating empty file: {filename} at {file_path}")
-            # Create empty JSON list file if it doesn't exist
-            try:
-                with open(file_path, 'w', encoding='utf-8') as f: # Added encoding
-                    json.dump([], f)
-            except Exception as e:
-                 print(f"Error creating file {file_path}: {e}")
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump([], f)
 
+    if not os.path.exists(template_dir) or \
+       not os.path.exists(os.path.join(template_dir, 'index.html')): # Also check for settings.html later
+        print(f"Warning: Templates directory or essential HTML files might be missing in '{template_dir}'.")
 
-    # Check if templates directory exists
-    if not os.path.exists(template_dir):
-         print(f"Warning: Templates directory '{template_dir}' does not exist.")
-    elif not os.path.exists(os.path.join(template_dir, 'index.html')):
-        print(f"Warning: 'index.html' not found inside templates directory '{template_dir}'.")
-
-    # Check if static directory exists (optional, Flask handles it but good practice)
     if not os.path.exists(static_dir):
-         print(f"Warning: Static directory '{static_dir}' does not exist. CSS/JS might not load.")
+         print(f"Warning: Static directory '{static_dir}' does not exist.")
 
-
-    # Set Flask static and template folder paths explicitly (optional but good practice)
     app.template_folder = template_dir
     app.static_folder = static_dir
-
-    # Note: For production, use a proper WSGI server instead of Flask's built-in debug server
-    app.run(debug=True) # debug=True helps with development
+    app.run(debug=True)

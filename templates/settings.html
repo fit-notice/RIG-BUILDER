@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en"> <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - TechBuild Studio</title> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Basic styling for settings page (from previous step) */
+        .settings-container {
+            padding: 40px;
+            max-width: 800px;
+            margin: 40px auto;
+            background: var(--card-bg-gradient, white);
+            border-radius: var(--standard-border-radius, 12px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            color: var(--text-color-main, #333);
+        }
+        .settings-container h1 {
+            color: var(--aero-sky-blue-dark, #4682B4);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .setting-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color, #eee);
+        }
+        .setting-section:last-child {
+            border-bottom: none;
+        }
+        .setting-section h2 {
+            font-size: 1.4em;
+            color: var(--text-color-main, #333);
+            margin-bottom: 15px;
+        }
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+        .setting-item label {
+            font-weight: 500;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .4s; border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 26px; width: 26px;
+            left: 4px; bottom: 4px; background-color: white;
+            transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--aero-sky-blue-dark, #2196F3); }
+        input:checked + .slider:before { transform: translateX(26px); }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo-container">
+                <h1>TechBuild</h1>
+                <span class="subtitle">Studio</span>
+            </div>
+            <nav class="sidebar-menu">
+                <div class="menu-item" onclick="window.location.href='{{ url_for('index') }}'">
+                    <i class="fas fa-arrow-left"></i>
+                    <span data-translate-key="backToBuilder">Back to Builder</span>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="settings-container">
+                <h1 data-translate-key="settingsPageTitle">Settings</h1>
+
+                <div class="setting-section">
+                    <h2 data-translate-key="appearanceTitle">Appearance</h2>
+                    <div class="setting-item">
+                        <label for="darkModeToggle" data-translate-key="darkModeLabel">Dark Mode</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="darkModeToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-section">
+                    <h2 data-translate-key="languageTitle">Language</h2>
+                    <div class="setting-item">
+                        <label for="languageSelect" data-translate-key="selectLanguageLabel">Select Language</label>
+                        <select id="languageSelect" class="toolbar-select" style="min-width: 150px;">
+                            <option value="en">English</option>
+                            <option value="ar">العربية (Arabic)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const languageSelect = document.getElementById('languageSelect');
+            
+            // Function to apply theme (copied from previous stage)
+            function applyTheme(theme) {
+                if (theme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    if(darkModeToggle) darkModeToggle.checked = true;
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    if(darkModeToggle) darkModeToggle.checked = false;
+                }
+            }
+
+            // Function to apply language settings (will call global one from main.js eventually)
+            function applyLanguageSettings(lang) {
+                localStorage.setItem('language', lang);
+                // The actual text update will be handled by the global applyTranslations function
+                // from main.js, which should be loaded on this page too if settings.html
+                // is a full page reload.
+                // For now, this script mainly handles saving the preference.
+                // We'll ensure the global script on main.js handles applying it.
+                // If settings.html becomes more SPA-like, it would directly call global applyTranslations.
+                
+                // Basic directionality and lang attribute update
+                if (lang === 'ar') {
+                    document.documentElement.dir = 'rtl';
+                    document.documentElement.lang = 'ar';
+                } else {
+                    document.documentElement.dir = 'ltr';
+                    document.documentElement.lang = 'en';
+                }
+                // Attempt to call global applyTranslations if available (if main.js is also loaded)
+                if (typeof window.applyTranslationsGlobal === 'function') {
+                    window.applyTranslationsGlobal(lang);
+                } else {
+                    // Fallback: reload if the global function isn't available (e.g. settings page is very standalone)
+                    // This ensures text re-renders based on the new lang attr. But dynamic updates are better.
+                    // Consider this a temporary measure if needed. Ideally, main.js's applyTranslations
+                    // would be callable or settings.html would have its own copy of translation logic.
+                    // For now, we assume that a navigation back to index.html will pick up the change,
+                    // and this settings page text is partially handled by data-translate-key if applyTranslations
+                    // is called on load (which it should be from main.js if it's part of the same context).
+
+                    // If settings.html is truly standalone and doesn't load main.js, it needs its own
+                    // version of the `translations` object and `applyTranslations` function.
+                    // For now, we rely on navigation or a shared JS context.
+                    console.log("Language changed to: " + lang + ". Main translation function might need to be called globally or page reloaded for full effect on *this* page if static text isn't updated yet.");
+                }
+            }
+
+            // Initial theme application
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme) {
+                applyTheme(currentTheme);
+            }
+
+            // Initial language application for the select element and direction
+            const currentLang = localStorage.getItem('language') || 'en';
+            if(languageSelect) languageSelect.value = currentLang;
+            if (currentLang === 'ar') {
+                document.documentElement.dir = 'rtl';
+                document.documentElement.lang = 'ar';
+            } else {
+                document.documentElement.dir = 'ltr';
+                document.documentElement.lang = 'en';
+            }
+            // Call global translation function if available (from main.js)
+            // This is to translate the settings page itself on load
+            if (typeof window.applyTranslationsGlobal === 'function') {
+                 window.applyTranslationsGlobal(currentLang);
+            }
+
+
+            if(darkModeToggle) {
+                darkModeToggle.addEventListener('change', function() {
+                    const newTheme = this.checked ? 'dark' : 'light';
+                    localStorage.setItem('theme', newTheme);
+                    applyTheme(newTheme);
+                });
+            }
+
+            if(languageSelect) {
+                languageSelect.addEventListener('change', function() {
+                    applyLanguageSettings(this.value);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
